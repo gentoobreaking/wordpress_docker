@@ -1,0 +1,55 @@
+version: '2'
+services:
+  mariadb:
+    image: 'docker.io/bitnami/mariadb:10.3-debian-10'
+    volumes:
+      - 'mariadb_data:/bitnami/mariadb'
+    environment:
+      - MARIADB_USER=fp_wordpress
+      - MARIADB_PASSWORD="fpwp!QAZaabbcc"
+      - MARIADB_DATABASE=fp_wordpress
+      - MARIADB_ROOT_PASSWORD="!QAZaabbcc"
+      - ALLOW_EMPTY_PASSWORD=no
+  wordpress:
+    image: 'docker.io/bitnami/wordpress:5-debian-10'
+    ports:
+      - '80:8080'
+      - '443:8443'
+    volumes:
+      - 'wordpress_data:/bitnami/wordpress'
+    depends_on:
+      - mariadb
+    environment:
+      - MARIADB_HOST=mariadb
+      - MARIADB_PORT_NUMBER=3306
+#      - MYSQL_CLIENT_CREATE_DATABASE_NAME="davidtest"
+#      - MYSQL_CLIENT_CREATE_DATABASE_USER="david"
+#      - MYSQL_CLIENT_CREATE_DATABASE_PASSWORD="davidpw"
+      - WORDPRESS_DATABASE_USER=fp_wordpress
+      - WORDPRESS_DATABASE_NAME=fp_wordpress
+      - WORDPRESS_DATABASE_PASSWORD="fpwp!QAZaabbcc"
+#      - WORDPRESS_DATABASE_SSL_CA_FILE="" # Certificate to connect with the database using SSL.
+      - WORDPRESS_TABLE_PREFIX=fp_
+      - ALLOW_EMPTY_PASSWORD=no
+      - WORDPRESS_SKIP_INSTALL=no
+      - WORDPRESS_USERNAME=admin
+      - WORDPRESS_PASSWORD=!QAZaabbcc
+      - WORDPRESS_EMAIL=user@example.com
+      - WORDPRESS_FIRST_NAME=David
+      - WORDPRESS_LAST_NAME=Chen
+      - WORDPRESS_BLOG_NAME="David's blog"
+      - WORDPRESS_SCHEME=http
+      - WORDPRESS_HTACCESS_OVERRIDE_NONE=yes
+      - WORDPRESS_HTACCESS_PERSISTENCE_ENABLED=no
+      - WORDPRESS_RESET_DATA_PERMISSIONS=no
+      - PHP_MEMORY_LIMIT=512M # default 256M
+      - SMTP_HOST=smtp.gmail.com # Host for outgoing SMTP email. No defaults.
+      - SMTP_PORT=587 # Port for outgoing SMTP email. No defaults.
+      - SMTP_USER="your_email@gmail.com" # User of SMTP used for authentication (likely email). No defaults.
+      - SMTP_PASSWORD="your_password" # Password for SMTP. No defaults.
+      - SMTP_PROTOCOL=tls # Secure connection protocol to use for SMTP [tls, ssl, none]. No defaults        
+volumes:
+  mariadb_data:
+    driver: local
+  wordpress_data:
+    driver: local
